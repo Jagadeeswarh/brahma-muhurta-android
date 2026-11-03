@@ -80,30 +80,42 @@ class AlarmActivity : ComponentActivity() {
                         )
                     ) {
                         Canvas(Modifier.fillMaxSize()) {
-                            val c = Offset(size.width * .5f, size.height * .60f)
-                            val r = size.minDimension * .22f * scale
-                            drawCircle(Color(0x22FFF1D4).copy(alpha = .55f * glow), r * 2.1f, c)
-                            drawCircle(Color(0x33FFF1D4), r * 1.65f, c)
-                            drawCircle(Color(0x66FFF1D4), r * 1.28f, c, style = androidx.compose.ui.graphics.drawscope.Stroke(2.dp.toPx()))
-                            drawCircle(Brush.radialGradient(listOf(Color(0xFFFFF8D9), Color(0xFFFFD18C), Color(0xFFFFA76D)), c, r), r, c)
-                            val horizon = size.height * .69f
-                            val hills = Path().apply {
-                                moveTo(0f, horizon + 40.dp.toPx())
-                                lineTo(size.width * .22f, horizon - 42.dp.toPx())
-                                lineTo(size.width * .48f, horizon + 22.dp.toPx())
-                                lineTo(size.width * .76f, horizon - 58.dp.toPx())
-                                lineTo(size.width, horizon + 20.dp.toPx())
-                                lineTo(size.width, size.height)
-                                lineTo(0f, size.height)
-                                close()
+                            val w=size.width; val h=size.height
+                            val sun=Offset(w*.50f,h*.59f)
+                            val radius=size.minDimension*.205f*scale
+                            drawRect(Brush.verticalGradient(listOf(Color(0xFF7773B7),Color(0xFFB49BC9),Color(0xFFFFC9AC),Color(0xFFFFD5B6))))
+                            // Soft dawn halo and fine concentric arcs.
+                            drawCircle(Color(0x22FFF0D5).copy(alpha=glow),radius*2.15f,sun)
+                            drawCircle(Color(0x20FFF0D5),radius*1.72f,sun)
+                            drawCircle(Color(0x55FFF1D9),radius*1.38f,sun,style=androidx.compose.ui.graphics.drawscope.Stroke(2.dp.toPx()))
+                            drawCircle(Brush.radialGradient(listOf(Color(0xFFFFFBE4),Color(0xFFFFE19B),Color(0xFFFFB36F)),sun,radius),radius,sun)
+                            // Floating dawn clouds sit behind the sun.
+                            val cloudY=h*.655f
+                            for (i in 0..5) {
+                                val x=w*(i/5f)
+                                val cloud=Brush.horizontalGradient(listOf(Color(0xFFFFE7D9).copy(alpha=.0f),Color(0xFFFFE7D9).copy(alpha=.85f),Color(0xFFFFE7D9).copy(alpha=.0f)),x-70.dp.toPx(),x+70.dp.toPx())
+                                drawOval(cloud,Offset(x-76.dp.toPx(),cloudY+(i%2)*12.dp.toPx()),androidx.compose.ui.geometry.Size(152.dp.toPx(),22.dp.toPx()))
+                                drawCircle(Color(0xFFFFE8DC).copy(alpha=.8f),15.dp.toPx(),Offset(x-25.dp.toPx(),cloudY+2.dp.toPx()))
+                                drawCircle(Color(0xFFFFE8DC).copy(alpha=.8f),19.dp.toPx(),Offset(x+3.dp.toPx(),cloudY-2.dp.toPx()))
                             }
-                            drawPath(hills, Brush.verticalGradient(listOf(Color(0xFF716B9A), Color(0xFF39375F))))
-                            for (i in 0..18) {
-                                drawCircle(
-                                    Color(0x88FFF2E4).copy(alpha = 0.53f * glow),
-                                    (i % 3 + 1).dp.toPx(),
-                                    Offset((i * 67 % size.width.toInt()).toFloat(), (i * 43 % size.height.toInt()).toFloat())
-                                )
+                            val distant=Path().apply { moveTo(0f,h*.73f); cubicTo(w*.18f,h*.62f,w*.29f,h*.66f,w*.46f,h*.76f); cubicTo(w*.65f,h*.62f,w*.82f,h*.64f,w,h*.73f); lineTo(w,h); lineTo(0f,h); close() }
+                            drawPath(distant,Brush.verticalGradient(listOf(Color(0xFFD2A8C4),Color(0xFF8E80A9))))
+                            val middle=Path().apply { moveTo(0f,h*.82f); lineTo(w*.22f,h*.72f); cubicTo(w*.36f,h*.76f,w*.43f,h*.85f,w*.54f,h*.83f); lineTo(w*.78f,h*.70f); lineTo(w,h*.81f); lineTo(w,h); lineTo(0f,h); close() }
+                            drawPath(middle,Brush.verticalGradient(listOf(Color(0xFF8176A4),Color(0xFF625B86))))
+                            val foreground=Path().apply { moveTo(0f,h*.84f); lineTo(w*.22f,h*.75f); lineTo(w*.48f,h*.88f); lineTo(w*.76f,h*.72f); lineTo(w,h*.84f); lineTo(w,h); lineTo(0f,h); close() }
+                            drawPath(foreground,Brush.verticalGradient(listOf(Color(0xFF514B78),Color(0xFF39365F))))
+                            // Small foreground foliage for the illustrated postcard finish.
+                            for (i in 0..8) {
+                                val x=w*(.08f+i*.105f)
+                                val y=h*(.91f+(i%3)*.018f)
+                                drawLine(Color(0xFF38375B),Offset(x,y+18.dp.toPx()),Offset(x-7.dp.toPx(),y-7.dp.toPx()),2.dp.toPx())
+                                drawOval(Color(0xFF4B496F),Offset(x-14.dp.toPx(),y-13.dp.toPx()),androidx.compose.ui.geometry.Size(12.dp.toPx(),7.dp.toPx()))
+                                drawOval(Color(0xFF4B496F),Offset(x-2.dp.toPx(),y-20.dp.toPx()),androidx.compose.ui.geometry.Size(14.dp.toPx(),8.dp.toPx()))
+                            }
+                            for (i in 0..20) {
+                                val x=(i*67 % w.toInt().coerceAtLeast(1)).toFloat()
+                                val y=(i*43 % (h*.43f).toInt().coerceAtLeast(1)).toFloat()
+                                drawCircle(Color(0x99FFF2E4),if(i%3==0) 2.dp.toPx() else 1.dp.toPx(),Offset(x,y))
                             }
                         }
 
@@ -112,11 +124,10 @@ class AlarmActivity : ComponentActivity() {
                                 .padding(top = maxOf(safeTop, 24.dp) + 22.dp, bottom = 30.dp),
                             horizontalAlignment = Alignment.CenterHorizontally
                         ) {
-                            Text("✧  BRAHMA MUHURTA  ✧", color = Color(0xFFFFF0D4), fontSize = 12.sp, fontWeight = FontWeight.SemiBold, letterSpacing = 2.sp)
+                            Column(horizontalAlignment = Alignment.CenterHorizontally) { Text("♧", color = Color(0xFFFFF0D4), fontSize = 34.sp); Text("Brahma Muhurta", color = Color.White, fontSize = 23.sp, fontWeight = FontWeight.SemiBold); Text("Time to wake, reflect and recharge", color = Color(0xFFFFF5EE), fontSize = 14.sp) }
                             Spacer(Modifier.weight(.62f))
                             Text(currentTime, color = Color.White, fontSize = 54.sp, fontWeight = FontWeight.Light, letterSpacing = (-2).sp)
                             Spacer(Modifier.height(10.dp))
-                            Text("Time to wake, reflect and recharge", color = Color(0xFFFFF5EE), fontSize = 15.sp, textAlign = TextAlign.Center)
                             Spacer(Modifier.weight(1.38f))
                             Button(
                                 onClick = { stopAlarm(); finish() },
