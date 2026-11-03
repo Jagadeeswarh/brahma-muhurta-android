@@ -112,8 +112,9 @@ class MainActivity : ComponentActivity() {
                     when (page) {
                         "Today" -> {
                             item { TodayHeader() }
-                            item { SunriseHero(start?.let(::time) ?: "—", end?.let(::time) ?: "—", selected) }
-                            item { SolarDetails(events.sunrise?.let(::time) ?: "—", events.sunset?.let(::time) ?: "—") }
+                            item { ScenicHomeIllustration() }
+                            item { MuhurtaSummary(start?.let(::time) ?: "—", end?.let(::time) ?: "—") }
+                            item { SunriseCompact(events.sunrise?.let(::time) ?: "—") }
                             item { RitualNote() }
                         }
                         "Calendar" -> {
@@ -175,7 +176,61 @@ class MainActivity : ComponentActivity() {
     Text(LocalDate.now().format(DateTimeFormatter.ofPattern("EEE, MMM d", Locale.getDefault())), color = Muted, fontSize = 13.sp)
     Spacer(Modifier.height(4.dp))
     Text("Good Morning", color = Ink, fontSize = 30.sp, fontWeight = FontWeight.Bold, letterSpacing = (-1).sp)
-    Text("A sacred time to focus, reflect\nand set your intention.", color = Muted, fontSize = 14.sp, lineHeight = 20.sp)
+    Text("A sacred time to focus, reflect\\nand set your intention.", color = Muted, fontSize = 14.sp, lineHeight = 20.sp)
+}
+
+@Composable private fun ScenicHomeIllustration() {
+    val anim = rememberInfiniteTransition(label = "home-sun")
+    val sunPulse by anim.animateFloat(.98f, 1.02f, infiniteRepeatable(tween(3200), RepeatMode.Reverse), label = "sun")
+    Box(Modifier.fillMaxWidth().height(238.dp)) {
+        Canvas(Modifier.fillMaxSize()) {
+            val w=size.width; val h=size.height
+            drawRect(Brush.verticalGradient(listOf(Color(0xFFFFE7D5),Color(0xFFFFD9C6),Color(0xFFE5C7D8))))
+            val sun=Offset(w*.50f,h*.61f)
+            drawCircle(Brush.radialGradient(listOf(Color(0xFFFFF6D8),Color(0xFFFFD58F),Color.Transparent),sun,h*.40f),h*.40f,sun)
+            drawCircle(Brush.radialGradient(listOf(Color(0xFFFFF7D9),Color(0xFFFFD27D)),sun,h*.105f*sunPulse),h*.105f*sunPulse,sun)
+            val far=Path().apply { moveTo(0f,h*.68f); cubicTo(w*.18f,h*.45f,w*.28f,h*.58f,w*.43f,h*.70f); cubicTo(w*.61f,h*.48f,w*.77f,h*.48f,w,h*.66f); lineTo(w,h); lineTo(0f,h); close() }
+            drawPath(far,Brush.verticalGradient(listOf(Color(0xFFD2AFCB),Color(0xFF9B8DB8))))
+            val mid=Path().apply { moveTo(0f,h*.79f); cubicTo(w*.20f,h*.58f,w*.32f,h*.73f,w*.48f,h*.82f); cubicTo(w*.69f,h*.58f,w*.82f,h*.67f,w,h*.76f); lineTo(w,h); lineTo(0f,h); close() }
+            drawPath(mid,Brush.verticalGradient(listOf(Color(0xFF9386B2),Color(0xFF71658F))))
+            val near=Path().apply { moveTo(0f,h*.91f); cubicTo(w*.24f,h*.72f,w*.33f,h*.84f,w*.52f,h*.91f); cubicTo(w*.72f,h*.75f,w*.84f,h*.78f,w,h*.88f); lineTo(w,h); lineTo(0f,h); close() }
+            drawPath(near,Color(0xFF51486F))
+            val tx=w*.88f; val ty=h*.59f
+            drawRect(Color(0xFF51486F),Offset(tx-8.dp.toPx(),ty+15.dp.toPx()),androidx.compose.ui.geometry.Size(16.dp.toPx(),24.dp.toPx()))
+            val roof=Path().apply { moveTo(tx-13.dp.toPx(),ty+15.dp.toPx()); lineTo(tx,ty); lineTo(tx+13.dp.toPx(),ty+15.dp.toPx()); close() }
+            drawPath(roof,Color(0xFF51486F))
+            drawRect(Color(0xFF51486F),Offset(tx-2.dp.toPx(),ty+5.dp.toPx()),androidx.compose.ui.geometry.Size(4.dp.toPx(),10.dp.toPx()))
+            val bx=w*.10f; val by=h*.77f
+            drawLine(Color(0xFF494365),Offset(bx,by+28.dp.toPx()),Offset(bx+2.dp.toPx(),by-23.dp.toPx()),4.dp.toPx())
+            listOf(Offset(bx-14.dp.toPx(),by-17.dp.toPx()),Offset(bx+1.dp.toPx(),by-31.dp.toPx()),Offset(bx+16.dp.toPx(),by-15.dp.toPx())).forEach { drawCircle(Color(0xFF494365),13.dp.toPx(),it) }
+        }
+    }
+}
+
+@Composable private fun MuhurtaSummary(start:String,end:String) {
+    Card(shape=RoundedCornerShape(24.dp),colors=CardDefaults.cardColors(containerColor=Color(0xFFFFF9F5)),elevation=CardDefaults.cardElevation(2.dp)) {
+        Row(Modifier.fillMaxWidth().padding(18.dp),verticalAlignment=Alignment.CenterVertically) {
+            Box(Modifier.size(44.dp).background(Lavender,CircleShape),contentAlignment=Alignment.Center) { Text("✧",color=Purple,fontSize=27.sp) }
+            Spacer(Modifier.width(13.dp))
+            Column(Modifier.weight(1f)) {
+                Text("Brahma Muhurta",color=Ink,fontSize=15.sp,fontWeight=FontWeight.SemiBold)
+                Text("$start – $end",color=Ink,fontSize=23.sp,fontWeight=FontWeight.Bold,letterSpacing=(-.8).sp)
+                Text("Duration · 48 minutes",color=Muted,fontSize=12.sp)
+            }
+        }
+    }
+}
+
+@Composable private fun SunriseCompact(sunrise:String) {
+    Card(shape=RoundedCornerShape(20.dp),colors=CardDefaults.cardColors(containerColor=Color(0xFFFFF9F5))) {
+        Row(Modifier.fillMaxWidth().padding(horizontal=18.dp,vertical=15.dp),verticalAlignment=Alignment.CenterVertically) {
+            Text("☼",color=Color(0xFFB98A4B),fontSize=24.sp)
+            Spacer(Modifier.width(12.dp))
+            Text("Sunrise",color=Ink,fontSize=15.sp,fontWeight=FontWeight.Medium)
+            Spacer(Modifier.weight(1f))
+            Text(sunrise,color=Ink,fontSize=17.sp,fontWeight=FontWeight.Bold)
+        }
+    }
 }
 
 @Composable private fun PageHeading(title: String, subtitle: String) {
