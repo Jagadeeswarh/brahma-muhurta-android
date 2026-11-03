@@ -191,7 +191,10 @@ class MainActivity : ComponentActivity() {
             Canvas(Modifier.fillMaxWidth().height(156.dp)) {
                 val center = Offset(size.width * .5f, size.height * .88f)
                 val radius = size.minDimension * .34f * pulse
-                drawCircle(Brush.radialGradient(listOf(Color(0xFFFFF5C9), Color(0xFFFFB86F), Color.Transparent), center, radius * 1.8f), radius * 1.8f, center)\n                drawCircle(Brush.verticalGradient(listOf(Color(0xFFFFF1B8), Color(0xFFFFB45E))), radius * .72f, center)\n                val ridge = androidx.compose.ui.graphics.Path().apply { moveTo(0f, size.height * .82f); lineTo(size.width*.25f,size.height*.60f); lineTo(size.width*.44f,size.height*.80f); lineTo(size.width*.70f,size.height*.55f); lineTo(size.width,size.height*.78f); lineTo(size.width,size.height); lineTo(0f,size.height); close() }\n                drawPath(ridge, Brush.verticalGradient(listOf(Color(0xFF9B8BBE), Color(0xFF645B88))))
+                drawCircle(Brush.radialGradient(listOf(Color(0xFFFFF5C9), Color(0xFFFFB86F), Color.Transparent), center, radius * 1.8f), radius * 1.8f, center)
+                drawCircle(Brush.verticalGradient(listOf(Color(0xFFFFF1B8), Color(0xFFFFB45E))), radius * .72f, center)
+                val ridge = androidx.compose.ui.graphics.Path().apply { moveTo(0f, size.height * .82f); lineTo(size.width*.25f,size.height*.60f); lineTo(size.width*.44f,size.height*.80f); lineTo(size.width*.70f,size.height*.55f); lineTo(size.width,size.height*.78f); lineTo(size.width,size.height); lineTo(0f,size.height); close() }
+                drawPath(ridge, Brush.verticalGradient(listOf(Color(0xFF9B8BBE), Color(0xFF645B88))))
                 drawArc(Color(0x66F6D59B), 190f, 160f, false, topLeft = Offset(center.x - radius * 1.45f, center.y - radius * 1.45f), size = androidx.compose.ui.geometry.Size(radius * 2.9f, radius * 2.9f), style = androidx.compose.ui.graphics.drawscope.Stroke(2.dp.toPx()))
                 for (i in 0..18) {
                     val x = (i * 47 % size.width.toInt().coerceAtLeast(1)).toFloat()
