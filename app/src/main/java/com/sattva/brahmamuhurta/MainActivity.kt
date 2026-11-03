@@ -185,30 +185,41 @@ class MainActivity : ComponentActivity() {
 
 @Composable private fun SunriseHero(start: String, end: String, date: LocalDate) {
     val transition = rememberInfiniteTransition(label = "sunrise-pulse")
-    val pulse by transition.animateFloat(0.96f, 1.04f, infiniteRepeatable(tween(2600, easing = FastOutSlowInEasing), RepeatMode.Reverse), label = "sun-pulse")
-    Card(shape = RoundedCornerShape(30.dp), colors = CardDefaults.cardColors(containerColor = Ink), modifier = Modifier.fillMaxWidth().animateContentSize()) {
-        Box(Modifier.fillMaxWidth().background(Brush.verticalGradient(listOf(Color(0xFF29483E), Ink))).padding(22.dp)) {
-            Canvas(Modifier.fillMaxWidth().height(156.dp)) {
-                val center = Offset(size.width * .5f, size.height * .88f)
-                val radius = size.minDimension * .34f * pulse
-                drawCircle(Brush.radialGradient(listOf(Color(0xFFFFF5C9), Color(0xFFFFB86F), Color.Transparent), center, radius * 1.8f), radius * 1.8f, center)
-                drawCircle(Brush.verticalGradient(listOf(Color(0xFFFFF1B8), Color(0xFFFFB45E))), radius * .72f, center)
-                val ridge = androidx.compose.ui.graphics.Path().apply { moveTo(0f, size.height * .82f); lineTo(size.width*.25f,size.height*.60f); lineTo(size.width*.44f,size.height*.80f); lineTo(size.width*.70f,size.height*.55f); lineTo(size.width,size.height*.78f); lineTo(size.width,size.height); lineTo(0f,size.height); close() }
-                drawPath(ridge, Brush.verticalGradient(listOf(Color(0xFF9B8BBE), Color(0xFF645B88))))
-                drawArc(Color(0x66F6D59B), 190f, 160f, false, topLeft = Offset(center.x - radius * 1.45f, center.y - radius * 1.45f), size = androidx.compose.ui.geometry.Size(radius * 2.9f, radius * 2.9f), style = androidx.compose.ui.graphics.drawscope.Stroke(2.dp.toPx()))
+    val pulse by transition.animateFloat(0.97f, 1.03f, infiniteRepeatable(tween(2600, easing = FastOutSlowInEasing), RepeatMode.Reverse), label = "sun-pulse")
+    Card(shape = RoundedCornerShape(30.dp), colors = CardDefaults.cardColors(containerColor = Ink), modifier = Modifier.fillMaxWidth()) {
+        Box(Modifier.fillMaxWidth().height(282.dp).background(Brush.verticalGradient(listOf(Color(0xFF29483E), Color(0xFF18201F))))) {
+            Canvas(Modifier.fillMaxSize()) {
+                val center = Offset(size.width * .52f, size.height * .43f)
+                val radius = size.minDimension * .27f * pulse
+                drawCircle(Brush.radialGradient(listOf(Color(0x99FFD18A), Color(0x55FFB86F), Color.Transparent), center, radius * 1.9f), radius * 1.9f, center)
+                drawCircle(Brush.verticalGradient(listOf(Color(0xFFFFF1B8), Color(0xFFFFA95F))), radius * .70f, center)
+                val ridge = androidx.compose.ui.graphics.Path().apply {
+                    moveTo(0f, size.height * .67f)
+                    lineTo(size.width * .25f, size.height * .55f)
+                    lineTo(size.width * .45f, size.height * .66f)
+                    lineTo(size.width * .70f, size.height * .52f)
+                    lineTo(size.width, size.height * .65f)
+                    lineTo(size.width, size.height)
+                    lineTo(0f, size.height)
+                    close()
+                }
+                drawPath(ridge, Brush.verticalGradient(listOf(Color(0xFF80749F), Color(0xFF51466F))))
                 for (i in 0..18) {
                     val x = (i * 47 % size.width.toInt().coerceAtLeast(1)).toFloat()
-                    val y = (i * 31 % size.height.toInt().coerceAtLeast(1)).toFloat()
-                    drawCircle(Color(0x55F6E8C8), if (i % 3 == 0) 2.dp.toPx() else 1.dp.toPx(), Offset(x, y))
+                    val y = (i * 31 % (size.height * .48f).toInt().coerceAtLeast(1)).toFloat()
+                    drawCircle(Color(0x66F6E8C8), if (i % 3 == 0) 2.dp.toPx() else 1.dp.toPx(), Offset(x, y))
                 }
             }
-            Column {
-                Text(date.format(DateTimeFormatter.ofPattern("EEEE  ·  d MMMM", Locale.getDefault())), color = Color(0xFF594D69), fontSize = 12.sp)
-                Spacer(Modifier.height(112.dp))
-                Text("BRAHMA MUHURTA", color = Purple, fontSize = 11.sp, fontWeight = FontWeight.Bold, letterSpacing = 1.5.sp)
-                Spacer(Modifier.height(8.dp))
-                Text("$start  –  $end", color = Ink, fontSize = 27.sp, fontWeight = FontWeight.Bold)
-                Text("48 minutes · before sunrise", color = Muted, fontSize = 12.sp)
+            Text(date.format(DateTimeFormatter.ofPattern("EEEE  ·  d MMMM", Locale.getDefault())), color = Color(0xFFE7E0D9), fontSize = 12.sp, modifier = Modifier.align(Alignment.TopStart).padding(22.dp))
+            Column(
+                Modifier.align(Alignment.BottomStart).fillMaxWidth()
+                    .background(Brush.verticalGradient(listOf(Color.Transparent, Color(0xDD17171B))))
+                    .padding(start = 22.dp, end = 22.dp, top = 34.dp, bottom = 20.dp)
+            ) {
+                Text("BRAHMA MUHURTA", color = Color(0xFFFFD18A), fontSize = 11.sp, fontWeight = FontWeight.Bold, letterSpacing = 1.5.sp)
+                Spacer(Modifier.height(5.dp))
+                Text("$start  –  $end", color = Color.White, fontSize = 25.sp, fontWeight = FontWeight.Bold)
+                Text("48 minutes · before sunrise", color = Color(0xFFE8E0DA), fontSize = 12.sp)
             }
         }
     }
