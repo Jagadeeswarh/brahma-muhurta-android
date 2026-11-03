@@ -36,6 +36,9 @@ import androidx.compose.material.icons.rounded.Home
 import androidx.compose.material.icons.rounded.Settings
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.material3.LocalTextStyle
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
@@ -75,7 +78,7 @@ class MainActivity : ComponentActivity() {
         if (Build.VERSION.SDK_INT >= 33 && checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS) != android.content.pm.PackageManager.PERMISSION_GRANTED) {
             notificationPermission.launch(Manifest.permission.POST_NOTIFICATIONS)
         }
-        setContent { MaterialTheme(colorScheme = lightColorScheme(primary = Purple, secondary = Gold, background = Cream, surface = Cream), typography = Typography(defaultFontFamily = Manrope)) { BrahmaApp() } }
+        setContent { MaterialTheme(colorScheme = lightColorScheme(primary = Purple, secondary = Gold, background = Cream, surface = Cream)) { CompositionLocalProvider(LocalTextStyle provides TextStyle(fontFamily = Manrope)) { BrahmaApp() } } }
     }
 
     @Composable private fun BrahmaApp() {
