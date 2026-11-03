@@ -53,10 +53,14 @@ import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.util.Locale
 
-private val Cream = Color(0xFFF6F1E7)
-private val Ink = Color(0xFF172D29)
-private val Gold = Color(0xFFD9A45B)
-private val Muted = Color(0xFF74786D)
+private val Cream = Color(0xFFFFF8F2)
+private val Ink = Color(0xFF17171B)
+private val Gold = Color(0xFFFFC978)
+private val Muted = Color(0xFF6F6870)
+private val Peach = Color(0xFFFFE1D0)
+private val Lavender = Color(0xFFE8DFFF)
+private val Purple = Color(0xFF51449A)
+private val Sage = Color(0xFFE5EDE2)
 
 class MainActivity : ComponentActivity() {
     private val notificationPermission = registerForActivityResult(ActivityResultContracts.RequestPermission()) { }
@@ -68,7 +72,7 @@ class MainActivity : ComponentActivity() {
         if (Build.VERSION.SDK_INT >= 33 && checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS) != android.content.pm.PackageManager.PERMISSION_GRANTED) {
             notificationPermission.launch(Manifest.permission.POST_NOTIFICATIONS)
         }
-        setContent { MaterialTheme(colorScheme = lightColorScheme(primary = Ink, secondary = Gold, background = Cream, surface = Color.White)) { BrahmaApp() } }
+        setContent { MaterialTheme(colorScheme = lightColorScheme(primary = Purple, secondary = Gold, background = Cream, surface = Cream)) { BrahmaApp() } }
     }
 
     @Composable private fun BrahmaApp() {
@@ -98,7 +102,7 @@ class MainActivity : ComponentActivity() {
                 (fadeIn(tween(220)) + slideInVertically(tween(260)) { it / 18 }) togetherWith
                     (fadeOut(tween(140)) + slideOutVertically(tween(180)) { -it / 24 })
             }) { page ->
-                LazyColumn(Modifier.fillMaxSize().padding(padding).padding(horizontal = 20.dp), contentPadding = PaddingValues(top = 24.dp, bottom = 28.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
+                LazyColumn(Modifier.fillMaxSize().padding(padding).padding(horizontal = 20.dp), contentPadding = PaddingValues(top = maxOf(WindowInsets.displayCutout.asPaddingValues().calculateTopPadding(), 24.dp) + 16.dp, bottom = 28.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
                     when (page) {
                         "Today" -> {
                             item { TodayHeader() }
@@ -162,10 +166,10 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable private fun TodayHeader() {
-    Text("SATTVA  ·  A DAILY RITUAL", color = Muted, fontSize = 10.sp, letterSpacing = 2.sp)
+    Text(LocalDate.now().format(DateTimeFormatter.ofPattern("EEE, MMM d", Locale.getDefault())), color = Muted, fontSize = 13.sp)
     Spacer(Modifier.height(4.dp))
-    Text("Brahma Muhurta", color = Ink, fontSize = 32.sp, fontWeight = FontWeight.Light)
-    Text("A quieter beginning to your day.", color = Muted, fontSize = 14.sp)
+    Text("Good Morning", color = Ink, fontSize = 30.sp, fontWeight = FontWeight.Bold, letterSpacing = (-1).sp)
+    Text("A sacred time to focus, reflect\nand set your intention.", color = Muted, fontSize = 14.sp, lineHeight = 20.sp)
 }
 
 @Composable private fun PageHeading(title: String, subtitle: String) {
@@ -181,7 +185,7 @@ class MainActivity : ComponentActivity() {
             Canvas(Modifier.fillMaxWidth().height(156.dp)) {
                 val center = Offset(size.width * .5f, size.height * .88f)
                 val radius = size.minDimension * .34f * pulse
-                drawCircle(Brush.radialGradient(listOf(Color(0xFFFFE4A8), Color(0xFFD9A45B), Color.Transparent), center, radius), radius, center)
+                drawCircle(Brush.radialGradient(listOf(Color(0xFFFFF5C9), Color(0xFFFFB86F), Color.Transparent), center, radius * 1.8f), radius * 1.8f, center)\n                drawCircle(Brush.verticalGradient(listOf(Color(0xFFFFF1B8), Color(0xFFFFB45E))), radius * .72f, center)\n                val ridge = androidx.compose.ui.graphics.Path().apply { moveTo(0f, size.height * .82f); lineTo(size.width*.25f,size.height*.60f); lineTo(size.width*.44f,size.height*.80f); lineTo(size.width*.70f,size.height*.55f); lineTo(size.width,size.height*.78f); lineTo(size.width,size.height); lineTo(0f,size.height); close() }\n                drawPath(ridge, Brush.verticalGradient(listOf(Color(0xFF9B8BBE), Color(0xFF645B88))))
                 drawArc(Color(0x66F6D59B), 190f, 160f, false, topLeft = Offset(center.x - radius * 1.45f, center.y - radius * 1.45f), size = androidx.compose.ui.geometry.Size(radius * 2.9f, radius * 2.9f), style = androidx.compose.ui.graphics.drawscope.Stroke(2.dp.toPx()))
                 for (i in 0..18) {
                     val x = (i * 47 % size.width.toInt().coerceAtLeast(1)).toFloat()
@@ -190,12 +194,12 @@ class MainActivity : ComponentActivity() {
                 }
             }
             Column {
-                Text(date.format(DateTimeFormatter.ofPattern("EEEE  ·  d MMMM", Locale.getDefault())).uppercase(), color = Color(0xFFC4D0C7), fontSize = 10.sp, letterSpacing = 1.4.sp)
+                Text(date.format(DateTimeFormatter.ofPattern("EEEE  ·  d MMMM", Locale.getDefault())), color = Color(0xFF594D69), fontSize = 12.sp)
                 Spacer(Modifier.height(112.dp))
-                Text("YOUR SACRED WINDOW", color = Color(0xFFC4D0C7), fontSize = 10.sp, letterSpacing = 1.5.sp)
+                Text("BRAHMA MUHURTA", color = Purple, fontSize = 11.sp, fontWeight = FontWeight.Bold, letterSpacing = 1.5.sp)
                 Spacer(Modifier.height(8.dp))
-                Text("$start  –  $end", color = Gold, fontSize = 28.sp, fontWeight = FontWeight.Light)
-                Text("48 minutes · before sunrise", color = Color(0xFFC4D0C7), fontSize = 12.sp)
+                Text("$start  –  $end", color = Ink, fontSize = 27.sp, fontWeight = FontWeight.Bold)
+                Text("48 minutes · before sunrise", color = Muted, fontSize = 12.sp)
             }
         }
     }
@@ -218,7 +222,7 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable private fun RitualNote() {
-    Card(shape = RoundedCornerShape(22.dp), colors = CardDefaults.cardColors(containerColor = Color(0xFFEAE5D8))) {
+    Card(shape = RoundedCornerShape(22.dp), colors = CardDefaults.cardColors(containerColor = Sage)) {
         Row(Modifier.padding(18.dp), verticalAlignment = Alignment.CenterVertically) {
             Text("✧", color = Gold, fontSize = 32.sp, modifier = Modifier.padding(end = 14.dp))
             Column {
@@ -322,7 +326,7 @@ class MainActivity : ComponentActivity() {
             Text("ALARM CHECK", color = Ink, fontWeight = FontWeight.Bold, fontSize = 12.sp)
             Text("Test the notification and full-screen wake-up experience. The test rings in about 10 seconds.", color = Muted, fontSize = 12.sp, lineHeight = 18.sp)
             Spacer(Modifier.height(10.dp))
-            OutlinedButton(onClick = onTest, modifier = Modifier.fillMaxWidth()) { Text("Test alarm now") }
+            OutlinedButton(onClick = onTest, modifier = Modifier.fillMaxWidth()) { Text("Test alarm (10 seconds)") }
             AnimatedVisibility(message.isNotBlank()) {
                 Text(message, color = Ink, fontSize = 11.sp, lineHeight = 16.sp, modifier = Modifier.padding(top = 10.dp).animateContentSize())
             }
