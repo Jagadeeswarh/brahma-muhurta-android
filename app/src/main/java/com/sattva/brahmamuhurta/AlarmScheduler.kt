@@ -14,11 +14,15 @@ object AlarmScheduler {
     const val OFFSET = "wake_offset_minutes"
     const val LAT = "latitude"
     const val LON = "longitude"
-    private const val REQUEST = 7101
+    const val EXTRA_TEST = "is_test_alarm"
+    private const val DAILY_REQUEST = 7101
+    private const val TEST_REQUEST = 7102
+
     fun canSchedule(context: Context): Boolean {
         val manager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
         return Build.VERSION.SDK_INT < 31 || manager.canScheduleExactAlarms()
     }
+
     fun scheduleNext(context: Context) {
         val prefs = context.getSharedPreferences(PREFS, Context.MODE_PRIVATE)
         if (!prefs.getBoolean(ENABLED, false) || !canSchedule(context)) return
@@ -32,21 +36,28 @@ object AlarmScheduler {
             date = date.plusDays(1)
             time = SolarCalculator.events(date, lat, lon, zone).sunrise?.minusMinutes(offset)
         }
-        time ?: return
-        val trigger = time.atZone(zone).toInstant().toEpochMilli()
-        val intent = PendingIntent.getBroadcast(context, REQUEST, Intent(context, AlarmReceiver::class.java), PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
-        val show = PendingIntent.getActivity(context, 7102, Intent(context, MainActivity::class.java), PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
+        val trigger = time?.atZone(zone)?.toInstant()?.toEpochMilli() ?: return
+        val intent = alarmIntent(context, DAILY_REQUEST, false)
+        val show = PendingIntent.getActivity(context, 7103, Intent(context, MainActivity::class.java), PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
         val manager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
         manager.setAlarmClock(AlarmManager.AlarmClockInfo(trigger, show), intent)
     }
-    fun cancel(context: Context) {
-        val intent = PendingIntent.getBroadcast(context, REQUEST, Intent(context, AlarmReceiver::class.java), PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
-        (context.getSystemService(Context.ALARM_SERVICE) as AlarmManager).cancel(intent)
-        context.getSharedPreferences(PREFS, Context.MODE_PRIVATE).edit().putBoolean(ENABLED, false).apply()
-    }
+
     fun test(context: Context) {
-        val intent = PendingIntent.getBroadcast(context, REQUEST + 1, Intent(context, AlarmReceiver::class.java), PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
-        val show = PendingIntent.getActivity(context, 7102, Intent(context, MainActivity::class.java), PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
-        (context.getSystemService(Context.ALARM_SERVICE) as AlarmManager).setAlarmClock(AlarmManager.AlarmClockInfo(System.currentTimeMillis() + 60_000, show), intent)
+        val manager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+        val show = PendingIntent.getActivity(context, 7103, Intent(context, MainActivity::class.java), PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
+        val trigger = System.currentTimeMillis() + 10_000L
+        manager.setAlarmClock(AlarmManager.AlarmClockInfo(trigger, show), alarmIntent(context, TEST_REQUEST, true))
+    }
+
+    private fun alarmIntent(context: Context, requestCode: Int, test: Boolean): PendingIntent {
+        val intent = Intent(context, AlarmReceiver::class.java).putExtra(EXTRA_TEST, test)
+        return PendingIntent.getBroadcast(context, requestCode, intent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
+    }
+
+    fun cancel(context: Context) {
+        val manager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+        manager.cancel(alarmIntent(context, DAILY_REQUEST, false))
+        context.getSharedPreferences(PREFS, Context.MODE_PRIVATE).edit().putBoolean(ENABLED, false).apply()
     }
 }
