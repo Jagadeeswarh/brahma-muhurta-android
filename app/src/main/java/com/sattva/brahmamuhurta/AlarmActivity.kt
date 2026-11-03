@@ -28,6 +28,9 @@ import androidx.core.app.NotificationManagerCompat
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
+import java.time.LocalTime
+import java.time.format.DateTimeFormatter
+import java.util.Locale
 
 private val Manrope = FontFamily(Font(R.font.manrope, FontWeight.Normal))
 
@@ -67,6 +70,7 @@ class AlarmActivity : ComponentActivity() {
                         label = "sun-glow"
                     )
                     val safeTop = WindowInsets.displayCutout.asPaddingValues().calculateTopPadding()
+                    val currentTime = remember { LocalTime.now().format(DateTimeFormatter.ofPattern("h:mm a", Locale.getDefault())) }
 
                     Box(
                         Modifier.fillMaxSize().background(
@@ -78,7 +82,7 @@ class AlarmActivity : ComponentActivity() {
                         Canvas(Modifier.fillMaxSize()) {
                             val c = Offset(size.width * .5f, size.height * .60f)
                             val r = size.minDimension * .22f * scale
-                            drawCircle(Color(0x22FFF1D4), r * 2.1f, c)
+                            drawCircle(Color(0x22FFF1D4).copy(alpha = .55f * glow), r * 2.1f, c)
                             drawCircle(Color(0x33FFF1D4), r * 1.65f, c)
                             drawCircle(Color(0x66FFF1D4), r * 1.28f, c, style = androidx.compose.ui.graphics.drawscope.Stroke(2.dp.toPx()))
                             drawCircle(Brush.radialGradient(listOf(Color(0xFFFFF8D9), Color(0xFFFFD18C), Color(0xFFFFA76D)), c, r), r, c)
@@ -109,11 +113,11 @@ class AlarmActivity : ComponentActivity() {
                             horizontalAlignment = Alignment.CenterHorizontally
                         ) {
                             Text("✧  BRAHMA MUHURTA  ✧", color = Color(0xFFFFF0D4), fontSize = 12.sp, fontWeight = FontWeight.SemiBold, letterSpacing = 2.sp)
-                            Spacer(Modifier.weight(1f))
-                            Text("4:26 AM", color = Color.White, fontSize = 54.sp, fontWeight = FontWeight.Light, letterSpacing = (-2).sp)
-                            Spacer(Modifier.height(8.dp))
+                            Spacer(Modifier.weight(.62f))
+                            Text(currentTime, color = Color.White, fontSize = 54.sp, fontWeight = FontWeight.Light, letterSpacing = (-2).sp)
+                            Spacer(Modifier.height(10.dp))
                             Text("Time to wake, reflect and recharge", color = Color(0xFFFFF5EE), fontSize = 15.sp, textAlign = TextAlign.Center)
-                            Spacer(Modifier.weight(1f))
+                            Spacer(Modifier.weight(1.38f))
                             Button(
                                 onClick = { stopAlarm(); finish() },
                                 modifier = Modifier.fillMaxWidth().height(62.dp),
