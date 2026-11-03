@@ -42,6 +42,8 @@ import androidx.compose.ui.draw.scale
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -61,6 +63,7 @@ private val Peach = Color(0xFFFFE1D0)
 private val Lavender = Color(0xFFE8DFFF)
 private val Purple = Color(0xFF51449A)
 private val Sage = Color(0xFFE5EDE2)
+private val Manrope = FontFamily(Font(R.font.manrope, FontWeight.Normal))
 
 class MainActivity : ComponentActivity() {
     private val notificationPermission = registerForActivityResult(ActivityResultContracts.RequestPermission()) { }
@@ -72,7 +75,7 @@ class MainActivity : ComponentActivity() {
         if (Build.VERSION.SDK_INT >= 33 && checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS) != android.content.pm.PackageManager.PERMISSION_GRANTED) {
             notificationPermission.launch(Manifest.permission.POST_NOTIFICATIONS)
         }
-        setContent { MaterialTheme(colorScheme = lightColorScheme(primary = Purple, secondary = Gold, background = Cream, surface = Cream)) { BrahmaApp() } }
+        setContent { MaterialTheme(colorScheme = lightColorScheme(primary = Purple, secondary = Gold, background = Cream, surface = Cream), typography = Typography(defaultFontFamily = Manrope)) { BrahmaApp() } }
     }
 
     @Composable private fun BrahmaApp() {
