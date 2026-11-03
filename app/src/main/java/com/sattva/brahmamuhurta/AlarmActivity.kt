@@ -15,6 +15,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.*
+import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -23,6 +25,8 @@ import androidx.core.app.NotificationManagerCompat
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
+
+private val Manrope = FontFamily(Font(R.font.manrope, FontWeight.Normal))
 
 class AlarmActivity : ComponentActivity() {
     private var ringtone: android.media.Ringtone? = null
@@ -35,6 +39,7 @@ class AlarmActivity : ComponentActivity() {
         WindowInsetsControllerCompat(window, window.decorView).systemBarsBehavior = WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
         try { ringtone = RingtoneManager.getRingtone(this, RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM)); if (android.os.Build.VERSION.SDK_INT >= 28) ringtone?.isLooping = true; ringtone?.play() } catch (_: Exception) { }
         setContent {
+            MaterialTheme(typography = Typography(defaultFontFamily = Manrope)) {
             val pulse = rememberInfiniteTransition(label = "alarm-sun")
             val scale by pulse.animateFloat(.94f, 1.07f, infiniteRepeatable(tween(2600, easing = FastOutSlowInEasing), RepeatMode.Reverse), label = "sun-scale")
             val glow by pulse.animateFloat(.72f, 1f, infiniteRepeatable(tween(2600, easing = FastOutSlowInEasing), RepeatMode.Reverse), label = "sun-glow")
@@ -65,6 +70,7 @@ class AlarmActivity : ComponentActivity() {
                     Spacer(Modifier.height(14.dp))
                     OutlinedButton(onClick = { stopAlarm(); AlarmScheduler.test(this@AlarmActivity); finish() }, modifier = Modifier.height(48.dp), shape = RoundedCornerShape(28.dp), colors = ButtonDefaults.outlinedButtonColors(contentColor = Color.White)) { Text("Snooze (10 min)") }
                 }
+            }
             }
         }
     }
