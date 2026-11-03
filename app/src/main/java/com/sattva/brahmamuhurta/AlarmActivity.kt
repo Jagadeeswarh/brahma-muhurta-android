@@ -11,6 +11,9 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.material3.LocalTextStyle
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
@@ -39,7 +42,7 @@ class AlarmActivity : ComponentActivity() {
         WindowInsetsControllerCompat(window, window.decorView).systemBarsBehavior = WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
         try { ringtone = RingtoneManager.getRingtone(this, RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM)); if (android.os.Build.VERSION.SDK_INT >= 28) ringtone?.isLooping = true; ringtone?.play() } catch (_: Exception) { }
         setContent {
-            MaterialTheme(typography = Typography(defaultFontFamily = Manrope)) {
+            MaterialTheme { CompositionLocalProvider(LocalTextStyle provides TextStyle(fontFamily = Manrope)) {
             val pulse = rememberInfiniteTransition(label = "alarm-sun")
             val scale by pulse.animateFloat(.94f, 1.07f, infiniteRepeatable(tween(2600, easing = FastOutSlowInEasing), RepeatMode.Reverse), label = "sun-scale")
             val glow by pulse.animateFloat(.72f, 1f, infiniteRepeatable(tween(2600, easing = FastOutSlowInEasing), RepeatMode.Reverse), label = "sun-glow")
@@ -55,7 +58,7 @@ class AlarmActivity : ComponentActivity() {
                     val horizon = size.height*.69f
                     val hills = Path().apply { moveTo(0f,horizon+40.dp.toPx()); lineTo(size.width*.22f,horizon-42.dp.toPx()); lineTo(size.width*.48f,horizon+22.dp.toPx()); lineTo(size.width*.76f,horizon-58.dp.toPx()); lineTo(size.width,horizon+20.dp.toPx()); lineTo(size.width,size.height); lineTo(0f,size.height); close() }
                     drawPath(hills, Brush.verticalGradient(listOf(Color(0xFF716B9A), Color(0xFF39375F))))
-                    for (i in 0..18) drawCircle(Color(0x88FFF2E4)*glow, (i%3+1).dp.toPx(), Offset((i*67%size.width.toInt()).toFloat(), (i*43%size.height.toInt()).toFloat()))
+                    for (i in 0..18) drawCircle(Color(0x88FFF2E4).copy(alpha = 0.53f * glow), (i%3+1).dp.toPx(), Offset((i*67%size.width.toInt()).toFloat(), (i*43%size.height.toInt()).toFloat()))
                 }
                 Column(Modifier.fillMaxSize().padding(horizontal = 28.dp).padding(top = maxOf(safeTop, 24.dp)+22.dp, bottom = 30.dp), horizontalAlignment = Alignment.CenterHorizontally) {
                     Text("✧  BRAHMA MUHURTA  ✧", color = Color(0xFFFFF0D4), fontSize = 12.sp, fontWeight = FontWeight.SemiBold, letterSpacing = 2.sp)
