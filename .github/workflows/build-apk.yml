@@ -27,6 +27,11 @@ jobs:
         uses: android-actions/setup-android@v3
         with:
           packages: 'platform-tools platforms;android-35 build-tools;35.0.0'
+      - name: Bundle Manrope font
+        run: |
+          mkdir -p app/src/main/res/font
+          curl --fail --location --retry 3 --output app/src/main/res/font/manrope.ttf 'https://raw.githubusercontent.com/google/fonts/main/ofl/manrope/Manrope%5Bwght%5D.ttf'
+          test -s app/src/main/res/font/manrope.ttf
       - name: Build debug APK and run unit tests
         run: gradle testDebugUnitTest assembleDebug
       - name: Upload APK
